@@ -1,5 +1,5 @@
-#Build生命周期简介
-##内容目录
+# Build生命周期简介
+## 内容目录
 * Build生命周期基础
 * 用Build生命周期配置你的项目
 	* 打包
@@ -9,7 +9,7 @@
 ## Build生命周期基础
 maven基于build生命周期这个核心概念。它意味着创建和分配特定组件（项目）的过程是明确定义的。对于构建项目的人来说，这意味着只需要学习构建maven项目的命令的最小集合，而POM文件会确保他们得到他们希望的结果。
 有三个内建的build生命周期：default、clean和site。default生命周期处理项目的部署，clean生命周期处理项目清理，而site生命周期处理生成项目文档。
-###一个build生命周期有多个阶段组成
+### 一个build生命周期有多个阶段组成
 以上每个build生命周期都由一组build阶段定义，一个build阶段代表着生命周期的一个步骤。
 举个栗子，default生命周期包括下面这些阶段（完整的阶段列表，查看[LifeCycle Reference](http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference)）
 
@@ -22,7 +22,7 @@ maven基于build生命周期这个核心概念。它意味着创建和分配特�
 * deploy-在构建环境中执行，将最终的软件包复制到远程仓库，从而和其它开发者、项目共享
 
 这些生命周期阶段（加上其它未展示的其它阶段）将被顺序执行来完成default生命周期。上面给出的生命周期阶段，这意味着当default生命周期被使用时，maven将首先验证项目，然后尝试编译源码，针对测试运行这些编译代，打包成二进制文件（即jar），针对jar包运行集成测试，验证集成测试，安装验证后的软件包到本地仓库，然后部署安装到远程仓库。
-##常用命令调用
+## 常用命令调用
 在开发环境中。使用下面的调用构建和安装组件到本地仓库
 
 	mvn install
@@ -35,7 +35,7 @@ maven基于build生命周期这个核心概念。它意味着创建和分配特�
 
 同样的命令可以在多模块脚本中使用（即一个项目有多个子项目）。maven遍历每个子项目执行clean，然后执行deploy（包括所有build阶段）
 
-###一个Build阶段由多个plugin goal组成
+### 一个Build阶段由多个plugin goal组成
 
 然而，即使每个build阶段负责build生命周期的一个特定步骤，但他们履行这些职责的方式可能是多变的。这是通过声明插件目标绑定到build阶段完成的
 
@@ -48,7 +48,7 @@ maven基于build生命周期这个核心概念。它意味着创建和分配特�
 更进一步，一个build阶段也可以被0个或多个目标绑定。如果一个build阶段没有绑定目标，那这个build阶段将不会被执行。单如果他被一个或多个目标绑定，它将执行所有这些目标。
 （注意：maven2.0.5以上，一个阶段绑定的多个目标将按照POM文件中定义的顺序执行，然后多个同样的插件实例是不支持的。maven2.0.11以上多个同样的插件实例将被组合执行）
 
-###一些阶段通常不是通过命令行调用
+### 一些阶段通常不是通过命令行调用
 
 以复合词命名的阶段（pre-*，post-*，process-*）通常不是直接通过命令行调用的。这些阶段对build进行排序，产生不为build外部使用的中间结果。在调用integration-test这个例子中，环境可能处于悬挂状态。
 
@@ -56,10 +56,10 @@ maven基于build生命周期这个核心概念。它意味着创建和分配特�
 
 故障安全（FailSage）和代码覆盖（code coverage）插件绑定目标到integration-test和verify阶段，The net result is test and coverage reports are available after the verify phase，如果integration-test被命令行调用，讲没有报告生成。更糟的是集成测试环境遗留在悬挂状态；Tomcat服务器或Docker实例处在运行状态，而maven可能不会自己中断。
 
-##使用Build生命周期配置你的项目
+## 使用Build生命周期配置你的项目
 build生命周期简单易用，但当你用来为一个项目构建Maven Build，你如何将任务分配给各个build阶段呢？
 
-###打包
+### 打包
 首先，最普遍的方式是通过POM元素&lt;packaging>给你的项目设置打包方式。一些有效的packaging值有jar、war、ear和pom。如果没有指定packaging值，它将默认为jar。
 
 每个打包方式包含了一系列绑定到特定阶段的目标。例如，jar方式将绑定以下目标到default生命周期的各个build阶段。
@@ -77,7 +77,7 @@ build生命周期简单易用，但当你用来为一个项目构建Maven Build�
 
 这是一个几乎标准的绑定集合，然而，一些packaging处理这些的方式有些不同。例如，一个项目纯粹是元数据（packaging值是pom）值绑定目标到install和deploy阶段（要查看一些packaging类型的goal-to-build-phase binding的完整列表，请参阅[Lifecycle Reference](http://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html#Lifecycle_Reference)）
 
-###插件
+### 插件
 
 第二种添加目标到阶段的方式是在你的项目中配置插件。插件是提供目标给Maven的生成物。此外，一个插件可能有一个或多个目标，其中每个目标表示那个插件的一种功能。例如，Compiler插件有两个目标：compile和testCompile。前者编译你的主要程序的源代码，而后者编译你的测试代码的源代码。
 
