@@ -80,7 +80,7 @@ ZooKeeper的znode的stat结构由以下几个字段组成：
 
  - **czxid**
  
- 	znode创建事件的czxid 
+ 	znode创建事件的zxid 
  - **mzxid**
 
  	znode节点最后一次修改事件的zxid
@@ -112,7 +112,10 @@ ZooKeeper的znode的stat结构由以下几个字段组成：
  
  	该znode节点的子节点数量
 
- 	
+**ZooKeeper Session**
+ZooKeeper客户端使用自身绑定的编程语言创建一个服务句柄来和ZooKeeper服务建立一个Session。一旦句柄被创建，这个句柄处于CONNECTING状态，然后客户端使用的库试图连接到组成ZooKeeper服务的某个服务器，此时句柄切换到CONNECTED状态。通常操作状态会在这两个状态之一。如果发生了不可恢复的错误，比如Session过期或者鉴权失败，或者应用程序显式关闭了句柄，那么句柄将会转到CLOSED状态，下图展示了ZooKeeper客户端可能的状态转移。
+![](https://i.imgur.com/aXyRmZN.png)
+
 
 
 
