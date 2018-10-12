@@ -9,7 +9,7 @@
 		- 临时节点
 		- 顺序节点--唯一命名
 	- ZooKeeper时间
-	- ZooKeeper静态结构
+	- ZooKeeper stat结构
 - ZooKeeper Session
 - ZooKeeper Watches
 - 使用ACLs实现ZooKeeper访问控制
@@ -56,6 +56,63 @@ ZooKeeper也有临时节点概念。这些znode和创建它的Session的活动�
 *顺序节点 -- 唯一命名*
 
 当创建一个znode节点时，你可以请求ZooKeeper追加一个单调递增的计数器到路径的末尾。这个计数器对于父节点是唯一的。这个计数器的格式为：%010d -- 也就是带0填充的10位数字（计数器以这种方式格式化以简化排序），即“<path>0000000001”,注意：用于存储下一个序列号的计数器是由父节点维护的有符号int类型，当自增超过2147483647 时计数器将会溢出
+
+**ZooKeeper时间**
+
+ZooKeeper使用多种方式追踪时间：
+
+ - **Zxid**
+
+  	每次改变ZooKeeper状态都会收到一个zxid(ZooKeeper Transaction Id)格式的标记。这向ZooKeeper暴露了所有变更的总的顺序。每次变更会有一个唯一的zxid，假如zxid1比zxid2则zxid1比zxid2先发生
+ - **版本号**
+
+ 	节点的每次变更都会导致节点的其中一个版本号自增。共三个版本号，分别是是version（znode数据的变更版本号）、cversion（znode子节点的变更版本号）、aversion（znode的ACL变更版本号）。
+ - **Ticks**
+ 	
+ 	当使用多个服务器的ZooKeeper时，服务器使用ticks来定义如状态上传、session超时、连接超时等事件的时间，tick时间只间接地通过最小session超时时间（2倍tick时间）暴露出来；如果客户端请求的session超时比最小session超时小，服务器会告知客户端。
+ - **真实时间**
+
+ 	ZooKeeper从不使用真实时间，或者时钟时间，除了当znode节点创建和修改时在stat结构中放入的时间戳。
+
+**ZooKeeper stat结构**
+
+ZooKeeper的znode的stat结构由以下几个字段组成：
+
+ - **czxid**
+ 
+ 	znode创建事件的czxid 
+ - **mzxid**
+
+ 	znode节点最后一次修改事件的zxid
+ - **pzxid**
+
+ 	znode子节点最后一次修改时间的zxid
+ - **ctime**
+
+ 	znode节点创建的时间和1970/01/01相隔的毫秒数
+ - **mtime**
+
+ 	znode节点最后一次更新的时间和1970/01/01相隔的毫秒数
+ - **version**
+
+ 	znode节点数据变更的版本号
+ - **cversion**
+ 
+ 	znode子节点变更的版本号
+ - **aversion**
+ 
+ 	znode节点的ACL变更的版本号
+ - **ephemeralOwner**
+ 
+ 	如果是临时节点，则表示该znode节点的所有者的session id，如果不是，该值为0
+ - **dataLength**
+ 
+ 	该znode节点的数据域的长度
+ - **numChildren**
+ 
+ 	该znode节点的子节点数量
+
+ 	
 
 
 
